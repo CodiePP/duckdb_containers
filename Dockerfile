@@ -12,6 +12,7 @@ USER squeak
 WORKDIR /home/squeak
 
 RUN git clone https://github.com/duckdb/duckdb.git duckdb.git
+RUN cd duckdb.git && git checkout v1.0.0
 RUN cd duckdb.git && STATIC_LIBCPP=1 make -j2
 RUN strip -s duckdb.git/build/release/duckdb
 
