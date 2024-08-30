@@ -3,7 +3,7 @@ FROM alpine:latest AS builder
 RUN addgroup -g 1000 squeak \
     && adduser -u 1000 -G squeak -s /bin/bash -D squeak \
     && apk update \
-    && apk add --no-cache bash git rsync curl alpine-sdk cmake
+    && apk add --no-cache bash git rsync curl alpine-sdk cmake ninja-build
 
 #COPY --chown=1000 duckdb_Linux_x86_64 /home/squeak/duckdb
 
@@ -13,7 +13,7 @@ WORKDIR /home/squeak
 
 RUN git clone https://github.com/duckdb/duckdb.git duckdb.git
 RUN cd duckdb.git && git checkout v1.0.0
-RUN cd duckdb.git && STATIC_LIBCPP=1 make -j2
+RUN cd duckdb.git && GEN=Ninja STATIC_LIBCPP=1 BUILD_ALL_IT_EXT=1 make -j2
 RUN strip -s duckdb.git/build/release/duckdb
 
 FROM alpine:latest
