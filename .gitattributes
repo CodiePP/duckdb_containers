@@ -1,0 +1,6 @@
+duckdb_FreeBSD_amd64 filter=lfs diff=lfs merge=lfs -text
+duckdb_Darwin_arm64 filter=lfs diff=lfs merge=lfs -text
+duckdb_Linux_aarch64 filter=lfs diff=lfs merge=lfs -text
+duckdb_FreeBSD_arm64 filter=lfs diff=lfs merge=lfs -text
+duckdb_Linux_x86_64 filter=lfs diff=lfs merge=lfs -text
+duckdb_Linux_riscv64 filter=lfs diff=lfs merge=lfs -text
