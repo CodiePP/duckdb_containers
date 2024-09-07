@@ -2,6 +2,14 @@
 
 duckdb executables for Linux/x86_64, Linux/aarch64, Linux/riscv64, Darwin/x86_64, Darwin/arm64, Windows/x86_64, FreeBSD/amd64, FreeBSD/arm64
 
+The multi-arch container can be found at:
+
+https://hub.docker.com/r/codieplusplus/duckdb
+
+
+and pulled with: `docker pull codieplusplus/duckdb`
+
+
 ## build Docker containers
 
 based on Alpine and musl:
