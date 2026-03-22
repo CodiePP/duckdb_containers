@@ -7,13 +7,20 @@ RUN addgroup -g 1000 squeak \
 
 #COPY --chown=1000 duckdb_Linux_x86_64 /home/squeak/duckdb
 
+ARG FORGEJO_PAT
+ARG FORGEJO_USER
+ARG TAG_VERSION
+ARG REPO_URL
+ARG DUCKDB_REPO
+
 USER squeak
 
 WORKDIR /home/squeak
 
-RUN git clone https://github.com/duckdb/duckdb.git duckdb.git
-RUN cd duckdb.git && git checkout v1.0.0
-RUN cd duckdb.git && GEN=Ninja STATIC_LIBCPP=1 BUILD_ALL_IT_EXT=1 make -j2
+#RUN git clone https://github.com/duckdb/duckdb.git duckdb.git
+RUN git clone https://${FORGEJO_USER}:${FORGEJO_PAT}@${REPO_URL}/${DUCKDB_REPO}.git duckdb.git
+RUN cd duckdb.git && git checkout ${TAG_VERSION}
+RUN cd duckdb.git && GEN=Ninja STATIC_LIBCPP=1 BUILD_ALL_IT_EXT=1 make -j$(nproc)
 RUN strip -s duckdb.git/build/release/duckdb
 
 FROM alpine:latest

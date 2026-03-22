@@ -1,25 +1,32 @@
 FROM debian:latest AS builder
 
-RUN addgroup --gid 1000 squeak \
-    && adduser --uid 1000 --gid 1000 --shell /bin/bash --disabled-password squeak \
-    && apt update \
-    && apt install --yes bash git libssl-dev automake g++ cmake ninja-build binutils
+RUN apt update \
+    && apt install --yes bash adduser git libssl-dev automake g++ cmake ninja-build binutils \
+    && addgroup --gid 1000 squeak \
+    && adduser --uid 1000 --gid 1000 --shell /bin/bash --disabled-password squeak
+
+ARG FORGEJO_PAT
+ARG FORGEJO_USER
+ARG TAG_VERSION
+ARG REPO_URL
+ARG DUCKDB_REPO
 
 USER squeak
 
 WORKDIR /home/squeak
 
-RUN git clone https://github.com/duckdb/duckdb.git duckdb.git
-RUN cd duckdb.git && git checkout v1.0.0
-RUN cd duckdb.git && GEN=Ninja STATIC_LIBCPP=1 BUILD_ALL_IT_EXT=1 make -j2
+# RUN git clone https://github.com/duckdb/duckdb.git duckdb.git
+RUN git clone https://${FORGEJO_USER}:${FORGEJO_PAT}@${REPO_URL}/${DUCKDB_REPO} duckdb.git
+RUN cd duckdb.git && git checkout ${TAG_VERSION}
+RUN cd duckdb.git && GEN=Ninja STATIC_LIBCPP=1 BUILD_ALL_IT_EXT=1 make -j$(nproc)
 RUN strip -s duckdb.git/build/release/duckdb
 
 FROM debian:latest
 
-RUN addgroup --gid 1000 squeak \
-    && adduser --uid 1000 --gid 1000 --shell /bin/bash --disabled-password squeak \
-    && apt update \
-    && apt install --yes bash
+RUN apt update \
+    && apt install --yes bash adduser openssl \
+    && addgroup --gid 1000 squeak \
+    && adduser --uid 1000 --gid 1000 --shell /bin/bash --disabled-password squeak
 
 USER squeak
 
@@ -27,4 +34,4 @@ WORKDIR /home/squeak
 
 COPY --chown=1000 --from=builder /home/squeak/duckdb.git/build/release/duckdb .
 
-CMD bash
+CMD ["bash"]
